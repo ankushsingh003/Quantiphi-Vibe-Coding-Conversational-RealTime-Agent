@@ -50,3 +50,28 @@ async def stream_openai_response(messages: list, tone: str = "professional"):
 
     # After streaming completes, also yield the full response for persistence
     yield f"__DONE__:{full_response}"
+
+
+async def generate_title(first_message: str) -> str:
+    """
+    Extra Feature 2: Auto-generate a smart, concise thread title
+    from the user's first message using GPT-4o.
+    """
+    response = await client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You generate very short, descriptive chat thread titles. "
+                    "Given the user's first message, respond with ONLY a title "
+                    "of 3-6 words. No quotes, no punctuation at the end."
+                ),
+            },
+            {"role": "user", "content": first_message},
+        ],
+        max_tokens=20,
+        temperature=0.5,
+    )
+    return response.choices[0].message.content.strip()
+
