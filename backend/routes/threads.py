@@ -1,0 +1,29 @@
+from fastapi import APIRouter, HTTPException
+from services.mongo_service import get_all_threads, get_thread_by_id, delete_thread
+
+router = APIRouter(prefix="/threads", tags=["Threads"])
+
+
+@router.get("/")
+async def list_threads():
+    """Return all conversation threads sorted by latest activity."""
+    threads = await get_all_threads()
+    return {"threads": threads}
+
+
+@router.get("/{thread_id}")
+async def get_thread(thread_id: str):
+    """Return a single thread with full message history."""
+    thread = await get_thread_by_id(thread_id)
+    if not thread:
+        raise HTTPException(status_code=404, detail="Thread not found")
+    return thread
+
+
+@router.delete("/{thread_id}")
+async def remove_thread(thread_id: str):
+    """Delete a thread by ID."""
+    deleted = await delete_thread(thread_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Thread not found")
+    return {"message": "Thread deleted successfully"}
