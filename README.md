@@ -93,4 +93,4 @@ Select your preferred AI response style:
 
 ---
 
-*Built during a 60-minute Vibe Coding Sprint 🔥*
+<!-- *Built during a 60-minute Vibe Coding Sprint 🔥* -->
