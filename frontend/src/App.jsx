@@ -16,6 +16,8 @@ export default function App() {
   const [tone, setTone]                      = useState('professional');
   const [connected, setConnected]            = useState(false);
 
+  const firstMessageRef = useRef(null); // track first msg for title generation
+
   // ---- WebSocket handlers ----
   const handleChunk = useCallback((chunk) => {
     setStreamingContent(prev => prev + chunk);
@@ -30,6 +32,22 @@ export default function App() {
 
   const handleThreadId = useCallback((threadId) => {
     setActiveThreadId(threadId);
+    // Trigger auto title generation for new thread after short delay
+    if (firstMessageRef.current) {
+      setTimeout(async () => {
+        try {
+          await fetch(`${API_BASE}/threads/${threadId}/generate-title`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ first_message: firstMessageRef.current }),
+          });
+          firstMessageRef.current = null;
+          fetchThreads(); // refresh sidebar with new title
+        } catch (e) {
+          console.warn('Title generation failed:', e);
+        }
+      }, 500);
+    }
   }, []);
 
   const handleError = useCallback((err) => {
@@ -94,6 +112,10 @@ export default function App() {
 
   // ---- Send a message ----
   const handleSend = useCallback((text) => {
+    // Store first message for auto-title generation on new threads
+    if (!activeThreadId) {
+      firstMessageRef.current = text;
+    }
     // Optimistically add user message
     setMessages(prev => [...prev, { role: 'user', content: text }]);
     setStreamingContent('');
