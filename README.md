@@ -123,4 +123,3 @@ Server -> Client:  { "type": "thread_id", "thread_id": "..." }
 
 ---
 
-*Built during a 60-minute Vibe Coding Sprint 🔥*
