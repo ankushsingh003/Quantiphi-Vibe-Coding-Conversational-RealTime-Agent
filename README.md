@@ -123,3 +123,21 @@ Server -> Client:  { "type": "thread_id", "thread_id": "..." }
 
 ---
 
+## ✨ Two Extra Features (Beyond Requirements)
+
+### 📋 Feature 1 — Copy-to-Clipboard Button
+Every AI response bubble includes a **Copy** button that:
+- Copies the full AI response text to clipboard with one click
+- Shows a green ✅ **"Copied!"** confirmation for 2 seconds
+- Only visible after streaming is fully complete
+
+### 🏷️ Feature 2 — Auto Thread Title Generation
+When a new conversation thread is started:
+- The **first user message** is sent to `POST /threads/{id}/generate-title`
+- GPT-4o generates a **3–6 word descriptive title** for the thread
+- The sidebar **instantly updates** with the smart title
+- Replaces the generic default with something meaningful like *"Explain Quantum Computing Simply"*
+
+---
+
+*Built during a 60-minute Vibe Coding Sprint 🔥*
