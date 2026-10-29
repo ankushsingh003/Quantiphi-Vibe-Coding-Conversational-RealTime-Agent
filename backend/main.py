@@ -5,7 +5,6 @@ from services.mongo_service import (
     create_thread,
     get_thread_by_id,
     append_message_to_thread,
-    update_thread_title,
 )
 from services.openai_service import stream_openai_response
 from datetime import datetime
