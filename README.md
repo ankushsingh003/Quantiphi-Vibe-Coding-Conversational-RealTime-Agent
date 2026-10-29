@@ -30,29 +30,37 @@
 ## 📁 Project Structure
 
 ```
-intelligent-chat/
-├── frontend/               ← React + Vite
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Sidebar.jsx
-│   │   │   ├── ChatWindow.jsx
-│   │   │   └── MessageBubble.jsx
-│   │   ├── hooks/
-│   │   │   └── useWebSocket.js
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   └── package.json
+Quantiphi/
+├── frontend/                        <- React + Vite
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+│       ├── main.jsx                 <- React entry point
+│       ├── App.jsx                  <- Root component + state
+│       ├── App.css
+│       ├── index.css                <- Global design system
+│       ├── components/
+│       │   ├── Sidebar.jsx          <- History + Tone Toggle
+│       │   ├── Sidebar.css
+│       │   ├── ChatWindow.jsx       <- Chat bubbles + input
+│       │   ├── ChatWindow.css
+│       │   ├── MessageBubble.jsx    <- User/AI bubble
+│       │   └── MessageBubble.css
+│       └── hooks/
+│           ├── useWebSocket.js      <- WS connection + events
+│           └── useAutoScroll.js     <- Auto-scroll to bottom
 │
-├── backend/                ← FastAPI + Python
-│   ├── main.py
-│   ├── routes/
-│   │   └── threads.py
-│   ├── services/
-│   │   ├── openai_service.py
-│   │   └── mongo_service.py
+├── backend/                         <- FastAPI + Python
+│   ├── main.py                      <- App entry + WS endpoint
+│   ├── requirements.txt
 │   ├── models/
-│   │   └── thread.py
-│   └── requirements.txt
+│   │   └── thread.py                <- Pydantic models
+│   ├── routes/
+│   │   └── threads.py               <- REST CRUD endpoints
+│   └── services/
+│       ├── openai_service.py        <- GPT-4o streaming + Tone
+│       └── mongo_service.py         <- MongoDB async operations
 │
 ├── .env.example
 └── README.md
@@ -62,35 +70,57 @@ intelligent-chat/
 
 ## ⚙️ Setup
 
-### Backend
+### 1. Clone the repo
+```bash
+git clone https://github.com/ankushsingh003/Quantiphi-Vibe-Coding-Conversational-RealTime-Agent.git
+cd Quantiphi-Vibe-Coding-Conversational-RealTime-Agent
+```
+
+### 2. Configure environment
+```bash
+cp .env.example .env
+# Fill in your OPENAI_API_KEY and MONGODB_URI in .env
+```
+
+### 3. Run Backend
 ```bash
 cd backend
 pip install -r requirements.txt
 uvicorn main:app --reload
+# Runs on http://localhost:8000
 ```
 
-### Frontend
+### 4. Run Frontend
 ```bash
 cd frontend
 npm install
 npm run dev
-```
-
-### Environment Variables
-```
-OPENAI_API_KEY=your_openai_key
-MONGODB_URI=your_mongodb_connection_string
+# Runs on http://localhost:5173
 ```
 
 ---
 
 ## 🎛️ Tone Toggle (Vibe Check)
 
-Select your preferred AI response style:
+Select your preferred AI response style from the sidebar:
 - 🏢 **Professional** — Formal, structured, precise
 - 😎 **Casual** — Friendly, conversational, relaxed
 - ⚡ **Concise** — Short, direct, no fluff
 
+The selected tone is injected as a **system instruction** into every OpenAI API call — changing the AI's response style instantly.
+
 ---
 
-<!-- *Built during a 60-minute Vibe Coding Sprint 🔥* -->
+## 🔌 WebSocket Protocol
+
+```
+Client -> Server:  { "message": "...", "tone": "casual", "thread_id": "..." }
+Server -> Client:  { "type": "thread_id", "thread_id": "..." }
+                   { "type": "chunk",     "content": "..." }   <- streaming
+                   { "type": "done",      "content": "..." }   <- full response
+                   { "type": "error",     "content": "..." }
+```
+
+---
+
+*Built during a 60-minute Vibe Coding Sprint 🔥*
